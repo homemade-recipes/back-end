@@ -83,10 +83,9 @@ func staticHandler(w http.ResponseWriter, req *http.Request) {
 	// Add recipes
 	var data interface{}
 	var err error
-	lang := "en"
-	_, ok := req.URL.Query()["lang"]
-	if ok {
-		lang = "pt"
+	lang := "pt"
+	if req.Host == "en.feitaemcasa.com" {
+		lang = "en"
 	}
 
 	switch path {
@@ -189,7 +188,10 @@ func uploadHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Validation
-	lang := req.URL.Query()["lang"]
+	lang := "pt"
+	if req.Host == "en.feitaemcasa.com" {
+		lang = "en"
+	}
 	category := req.MultipartForm.Value["category"]
 	title := req.MultipartForm.Value["title"]
 	author := req.MultipartForm.Value["author"]
@@ -198,9 +200,6 @@ func uploadHandler(w http.ResponseWriter, req *http.Request) {
 	if len(category)+len(title)+len(author) < 3 {
 		http.Error(w, "missing required fields", http.StatusBadRequest)
 		return
-	}
-	if len(lang) == 0 {
-		lang = []string{"en"}
 	}
 
 	const baseURL = "feitaemcasa.com/recipe.html?title="
@@ -212,11 +211,11 @@ func uploadHandler(w http.ResponseWriter, req *http.Request) {
 		Servings: servings[0],
 		Source:   "Feita em casa",
 		URL:      baseURL + url.QueryEscape(title[0]),
-		Language: lang[0],
+		Language: lang,
 	}
 
 	path := "upload-pt.html"
-	if lang[0] == "en" {
+	if lang == "en" {
 		newRecipe.Source = "Homemade Recipes"
 		path = "upload.html"
 	}
