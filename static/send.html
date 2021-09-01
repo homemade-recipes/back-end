@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    {{template "meta-pt.html"}}
+    <style>
+      {{template "main.css"}}
+      {{template "header.css"}}
+      {{template "form.css"}}
+    </style>
+  </head>
+  <body>
+    {{template "header.html"}}
+
+    <form class="recipe"
+      action="upload.html"
+      method="POST" 
+      enctype="multipart/form-data"
+    >
+      <div class="recipe-form">
+        <section>
+          <h1>Picture</h1>
+          <input type="file" id="picture" name="picture" accept="image/*">
+          
+          <h1>Author</h1>
+          <input type="text" id="author" name="author" placeholder="Your name" required>
+          
+          <h1>Category</h1>
+          <input type="text" id="category" name="category" placeholder="Category" required>
+          
+          <h1>Title</h1>
+          <input type="text" id="title" name="title" placeholder="Recipe name" required>
+          
+          <h1>Preparation time (optional)</h1>
+          <input type="text" name="time" placeholder="2 hours" >
+          
+          <h1>Servings (optional)</h1>
+          <input type="text" name="servings" placeholder="4 people">
+        </section>
+        <section>
+          <h1>Ingredients</h1>
+          <textarea name="ingredients" rows="10" cols="40" 
+            placeholder="one ingredient per line" required></textarea>
+          
+          <h1>Instructions</h1>
+          <textarea name="instructions" rows="10" cols="40" 
+            placeholder="one instruction per line" required></textarea>
+          
+          <h1>Notes (optional)</h1>
+          <textarea name="notes" rows="10" cols="40" 
+            placeholder="one note per line"></textarea><br>
+        </section>
+      </div>
+      
+      <input type="submit" value="Send">
+    </form>
+    
+    {{template "footer.html"}}
+  </body>
+</html>

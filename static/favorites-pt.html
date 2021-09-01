@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    {{template "meta-pt.html"}}
+    <style>
+      {{template "main.css"}}
+      {{template "header.css"}}
+      {{template "list.css"}}
+    </style>
+  </head>
+  <body>
+    {{template "header-pt.html"}}
+
+    <ul id="list"></ul>
+
+    <script>
+      {{template "recipe.js"}}
+      {{template "favorites.js"}}
+      getFavorites("pt");
+    </script>
+
+    {{template "footer-pt.html"}}
+  </body>
+</html>

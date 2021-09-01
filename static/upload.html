@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{template "meta.html"}}
+    <style>
+      {{template "main.css"}}
+      {{template "header.css"}}
+    </style>
+  </head>
+  <body>
+    {{template "header.html"}}
+    
+    {{if .}}
+        <h1>We are sorry but an error occured!</h1>
+        <p>
+            This means we could'nt process you new recipe, we will try to
+            fix this. Please try again in a few days.
+        </p>
+        <details>
+            <summary>Error details:</summary>
+            <p><samp>{{.Error}}</samp></p>
+        </details>
+    {{else}}
+        <h1>Thank you!</h1>
+        <p>
+            Your recipe has been received and will be added to the site
+            briefly.
+        </p>
+    {{end}}
+    <p>
+        You can now <a href="index.html">return to main page</a>.
+    </p>
+    
+    {{template "footer.html"}}
+  </body>
+</html>

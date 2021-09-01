@@ -1,0 +1,57 @@
+html,
+body {
+  background-color: antiquewhite;
+  max-width: 700px;
+  width: 100%;
+  height: 100vh;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: 86px auto auto;
+  font-family: sans, sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+input[type="text"]:focus, textarea:focus {
+  outline: none;
+  box-shadow: inset 0 0 3px blue;
+  border-radius: 14px;
+}
+
+input[type="text"], textarea {
+  width: 300px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  border-radius: 14px;
+  border-width: 1px;
+}
+
+button.fav {
+  border-width: 0px;
+  background-color: transparent;
+}
+
+button.fav:hover {
+  cursor: pointer;
+}
+
+.pager {
+	text-align: center;
+}
+
+footer {
+  display: grid;
+  align-self: end;
+}
+
+footer > hr {
+  width: 100%;
+}
+
+footer > section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  justify-items: center;
+}

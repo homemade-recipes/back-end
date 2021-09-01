@@ -1,0 +1,6 @@
+.search {
+    margin: 60px auto;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    {{template "meta-pt.html"}}
+    <style>
+      {{template "main.css"}}
+      {{template "index.css"}}
+      {{template "header.css"}}
+      {{template "list.css"}}
+    </style>
+  </head>
+  <body>
+    {{template "header-pt.html"}}
+
+    <div>
+      <form class="search" id="search-form" action="index.html">
+        <input type="text" placeholder="🔍 Buscar" id="search" name="search">
+        <p>
+          <input checked type="radio" name="by" id="ingred" value="ingredients"/>
+          <label for="ingred">Por ingrediente</label>
+          <input type="radio" name="by" id="name" value="name"/>
+          <label for="name">Por nome</label>
+          <input type="hidden" name="lang" value="pt"/>
+        </p>
+      </form>
+      
+      <ul id="list">
+        {{template "recipes-pt.gohtml" .Recipes}}
+      </ul>
+      {{template "pager-pt.gohtml" .}}
+    </div>
+      
+      <script>
+        {{template "favorites.js"}}
+        
+        let input = document.getElementById("search");
+        input.addEventListener("keyup", function(event) {
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+          let form = document.querySelector("#search-form");
+          form.submit();
+        }
+      });
+      
+      document.querySelectorAll(".fav").forEach(e => isFavorite(e.id));
+    </script>
+
+    {{template "footer-pt.html"}}
+  </body>
+</html>

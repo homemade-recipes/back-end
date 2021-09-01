@@ -1,0 +1,33 @@
+<img id="banner" class="banner" src="{{.Picture}}" />
+
+<h1>{{.Title}}</h1>
+
+<h2>Autor(a)</h2>
+<p>{{.Author}}</p>
+
+<h2>Ingredientes</h2>
+
+<ul>
+{{range .Ingredients}}
+    <li>{{.}}</li>
+{{end}}
+</ul>
+
+<h2>Instruções</h2>
+<ul>
+{{range .Instructions}}
+    <li>{{.}}</li>
+{{end}}
+</ul>
+
+{{if .Notes}}
+<h2>Notas</h2>
+    <ul>
+    {{range .Notes}}
+        <li>{{.}}</li>
+    {{end}}
+    </ul>
+{{end}}
+
+<h2>Fonte</h2>
+<p>{{.Source}}</p>

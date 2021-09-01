@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <title>Homemade recipes</title>
+    <style>
+      {{template "main.css"}}
+      {{template "header.css"}}
+    </style>
+
+    <meta charset="UTF-8" />
+    <meta name="language" content="portuguese" />
+    <meta name="author" content="Brian Lee Mayer" />
+    <meta
+        name="description"
+        content="Feita em casa é o app ideal para você encontrar sua receita"
+    />
+    <meta
+        name="keywords"
+        content="app, feita em casa, android, iOS, receita, busca"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    {{template "header.html"}}
+    
+    {{if .}}
+        <h1>Sentimos muito mas um erro aconteceu!</h1>
+        <p>
+            Isso significa que não conseguimos processar sua nova receita,
+            estaremos corrigindo esse problema. Por favor tente novamente
+            em alguns dias.
+        </p>
+        <details>
+            <summary>Detalhes do erro:</summary>
+            <p><samp>{{.Error}}</samp></p>
+        </details>
+    {{else}}
+        <h1>Agradecemos!</h1>
+        <p>Sua receita foi recebida e será adicionada ao site em breve.</p>
+    {{end}}
+    <p>
+        Você pode <a href="index-pt.html">retornar para a página inicial.</a>.
+    </p>
+  </body>
+</html>

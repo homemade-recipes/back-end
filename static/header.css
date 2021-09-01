@@ -1,0 +1,31 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px 0;
+}
+
+div.menu:hover {
+    cursor: pointer;
+}
+
+.links {
+    display: none;
+    position: absolute;
+    background-color: rgba(229, 37, 103, .25);
+    padding: 6px 0px ;
+    border-radius: 6px;
+}
+
+.links > a {
+    display: block;
+    padding: 0px 12px;
+}
+
+.links > a:hover {
+    display: block;
+    background-color: rgba(0, 0, 0, .1);
+} 
+
+div.menu:hover > .links {
+    display: block;
+}

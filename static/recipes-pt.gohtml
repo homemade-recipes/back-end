@@ -1,0 +1,20 @@
+{{range .}}
+    <li class="list">
+        <div>
+            <img 
+                class="lazyload"
+                loading="lazy"
+                src="{{.Picture}}" 
+                alt="{{.Title}}"
+                onerror="this.src='images/icon.png'"
+            />
+            <a href="recipe.html?lang=pt&title={{.Title}}">{{.Title}}</a>
+            <div>Por: {{.Author}}</div>
+            <div>Em: {{.Category}}</div>
+        </div>
+        <button id="{{.Title}}" class="fav"
+            onclick="toggleFav('{{.Title}}')">
+            🤍
+        </button>
+    </li>
+{{end}}
