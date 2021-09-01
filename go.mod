@@ -1,4 +1,4 @@
-module github.com/homemade-recipes/back-end
+module github.com/homemade-recipes/service
 
 go 1.16
 

@@ -1,2 +1,5 @@
 User-agent: *
 Disallow:
+
+Sitemap: https://feitaemcasa.com/sitemap.txt
+Sitemap: https://feitaemcasa.com/sitemap.xml
