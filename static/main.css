@@ -1,8 +1,6 @@
-html,
 body {
   background-color: antiquewhite;
   max-width: 780px;
-  width: 100%;
   height: 100vh;
   margin: 0 auto;
   display: grid;
