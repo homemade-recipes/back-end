@@ -1,49 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>    
-    {{template "meta.html"}}
-    <style>
-      {{template "main.css"}}
-      {{template "index.css"}}
-      {{template "header.css"}}
-      {{template "list.css"}}
-    </style>
-  </head>
-  <body>
-    {{template "header.html"}}
-    
-    <div>
-      <form class="search" id="search-form" action="index.html">
-        <input type="text" placeholder="🔍 Search" id="search" name="search">
-        <p>
-          <input checked type="radio" name="by" id="ingred" value="ingredients"/>
-          <label for="ingred">By ingredient</label>
-          <input type="radio" name="by" id="name" value="name"/>
-          <label for="name">By name</label>
-        </p>
-      </form>
-      
-      <ul id="list">
-        {{template "recipes.gohtml" .Recipes}}
-      </ul>
-      {{template "pager.gohtml" .}}
-    </div>
 
-    <script>
-      {{template "favorites.js"}}
+<head>
+	{{template "meta.html"}}
+	<style>
+		{
+				{
+				template "main.css"
+			}
+		}
 
-      let input = document.getElementById("search");
-      input.addEventListener("keyup", function(event) {
-        // Number 13 is the "Enter" key on the keyboard
-        if (event.keyCode === 13) {
-          let form = document.querySelector("#search-form");
-          form.submit();
-        }
-      });
+			{
+				{
+				template "index.css"
+			}
+		}
 
-      document.querySelectorAll(".fav").forEach(e => isFavorite(e.id));
-    </script>
+			{
+				{
+				template "header.css"
+			}
+		}
 
-    {{template "footer.html"}}
-  </body>
+			{
+				{
+				template "list.css"
+			}
+		}
+	</style>
+</head>
+
+<body>
+	{{template "header.html"}}
+
+	<div>
+		<form class="search" id="search-form" action="index.html">
+			<input type="text" placeholder="🔍 Search" id="search" name="search">
+			<p>
+				<input checked type="radio" name="by" id="ingred" value="ingredients" />
+				<label for="ingred">By ingredient</label>
+				<input type="radio" name="by" id="name" value="name" />
+				<label for="name">By name</label>
+			</p>
+		</form>
+		{{if .Recipes}}
+		<ul id="list">
+			{{template "recipes.gohtml" .Recipes}}
+		</ul>
+		{{template "pager.gohtml" .}}
+		{{end}}
+	</div>
+
+	<script>
+		{ {template "favorites.js" } }
+
+		let input = document.getElementById("search");
+		input.addEventListener("keyup", function (event) {
+			// Number 13 is the "Enter" key on the keyboard
+			if (event.keyCode === 13) {
+				let form = document.querySelector("#search-form");
+				form.submit();
+			}
+		});
+
+		document.querySelectorAll(".fav").forEach(e => isFavorite(e.id));
+	</script>
+
+	{{template "footer.html"}}
+</body>
+
 </html>

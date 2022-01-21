@@ -1,61 +1,80 @@
 package main
 
 import (
-	"context"
 	"embed"
+	"encoding/json"
 	"net/http"
 	"os"
+	"strings"
 	"text/template"
-
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
-	connString = os.Getenv("CONN_STRING")
-	port       = os.Getenv("PORT")
-	ctx        = context.Background()
-
-	recipes  *mongo.Collection
-	uploads  *mongo.Collection
-	pictures *mongo.Collection
+	port        = os.Getenv("PORT")
+	githubToken = os.Getenv("GITHUB_TOKEN")
 
 	//go:embed static/*
 	pages embed.FS
+
+	// recipe indexes
+	titleIndex      = map[string]recipe{}
+	ingredientIndex = map[string][]recipe{}
 )
 
 type recipe struct {
-	URL          string `bson:"url"`
-	Category     string `bson:"category"`
-	Picture      string `bson:"picture"`
-	Title        string `bson:"title"`
-	Language     string `bson:"language"`
+	URL          string
+	Category     string
+	Picture      string
+	Title        string
+	Language     string
 	Servings     string
 	Time         string
-	Author       string   `bson:"author"`
-	Source       string   `bson:"source"`
-	Ingredients  []string `bson:"ingredients"`
-	Instructions []string `bson:"instructions"`
-	Notes        []string `bson:"notes"`
-	Visits       int      `bson:"visits"`
+	Author       string
+	Source       string
+	Ingredients  []string
+	Instructions []string
+	Visits       int
+	Notes        []string
 }
 
 var pageTemplate *template.Template
+var recipes []recipe
 
 func main() {
-	// Initiate a session with Mongo
-	conn, err := mongo.Connect(ctx, options.Client().ApplyURI(connString))
-	if err != nil {
-		panic("mongo connection " + err.Error())
+	if port == "" {
+		port = "8080"
 	}
-	recipes = conn.Database("recipes_app").Collection("recipes")
-	uploads = conn.Database("recipes_app").Collection("uploads")
-	pictures = conn.Database("recipes_app").Collection("pictures")
 
-	// Parse templates
+	var err error
 	pageTemplate, err = template.ParseFS(pages, "static/*.*")
 	if err != nil {
 		panic("parse templates: " + err.Error())
+	}
+
+	// parse recipes
+	db, err := os.Open("db.json")
+	if err != nil {
+		panic("open recipes: " + err.Error())
+	}
+	err = json.NewDecoder(db).Decode(&recipes)
+	if err != nil {
+		panic("decode recipes: " + err.Error())
+	}
+
+	// build indexes
+	for _, r := range recipes {
+		titleIndex[r.Title] = r
+
+		ingreds := map[string]struct{}{}
+		for _, ingred := range r.Ingredients {
+			ings := strings.Fields(ingred)
+			for _, i := range ings {
+				ingreds[strings.ToLower(i)] = struct{}{}
+			}
+		}
+		for i := range ingreds {
+			ingredientIndex[i] = append(ingredientIndex[i], r)
+		}
 	}
 
 	// For compatibility
