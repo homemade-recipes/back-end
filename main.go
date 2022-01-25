@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 	"text/template"
 )
@@ -62,20 +63,23 @@ func main() {
 	}
 
 	// build indexes
-	for _, r := range recipes {
-		titleIndex[r.Title] = r
+	go func() {
+		for _, r := range recipes {
+			titleIndex[r.Title] = r
 
-		ingreds := map[string]struct{}{}
-		for _, ingred := range r.Ingredients {
-			ings := strings.Fields(ingred)
-			for _, i := range ings {
-				ingreds[strings.ToLower(i)] = struct{}{}
+			ingreds := map[string]struct{}{}
+			for _, ingred := range r.Ingredients {
+				ings := strings.Fields(ingred)
+				for _, i := range ings {
+					ingreds[strings.ToLower(i)] = struct{}{}
+				}
+			}
+			for i := range ingreds {
+				ingredientIndex[i] = append(ingredientIndex[i], r)
 			}
 		}
-		for i := range ingreds {
-			ingredientIndex[i] = append(ingredientIndex[i], r)
-		}
-	}
+		sort.Slice(recipes, func(i, j int) bool { return recipes[i].Visits > recipes[j].Visits })
+	}()
 
 	// For compatibility
 	http.HandleFunc("/images/", imageHandler)
