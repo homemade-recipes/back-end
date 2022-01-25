@@ -49,7 +49,7 @@ func getMostVisited(lang string, page int) []recipe {
 
 func getByName(lang, name string, page int) []recipe {
 	search := cleanSearch(strings.Fields(name))
-	return searchNameIndex(search)
+	return searchNameIndex(search, lang)
 }
 
 // TODO: What to do with accents?
@@ -90,13 +90,16 @@ func searchIngredientIndex(search []string) []recipe {
 }
 
 // TODO: What to do with accents?
-func searchNameIndex(search []string) []recipe {
+func searchNameIndex(search []string, lang string) []recipe {
 	matches := []struct {
 		Recipe recipe
 		Count  int
 	}{}
 
 	for _, r := range recipes {
+		if lang != r.Language {
+			continue
+		}
 		match := struct {
 			Recipe recipe
 			Count  int
