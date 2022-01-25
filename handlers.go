@@ -244,12 +244,17 @@ func uploadHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Create issue on github
+	payload, err := json.Marshal(newRecipe)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	body := struct {
 		Title string `json:"title"`
 		Body  string `json:"body"`
 	}{
 		Title: "New recipe: " + newRecipe.Title,
-		Body:  fmt.Sprintf("%#v", newRecipe),
+		Body:  string(payload),
 	}
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {
