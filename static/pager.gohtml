@@ -1,11 +1,11 @@
 <div class="pager">
 	{{if .Page}}
-		<a href="/index.html?page={{.Prev}}">&lt&lt</a>
+		<a href="?page={{.Prev}}">&lt&lt</a>
 	{{end}}
 
-	{{.Next}}
-	
 	{{if .Next}}
-		<a href="/index.html?page={{.Next}}">&gt&gt</a>
+	
+	{{.Next}}
+		<a href="?page={{.Next}}">&gt&gt</a>
 	{{end}}
 </div>

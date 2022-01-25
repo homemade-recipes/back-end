@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -49,12 +50,12 @@ func apiHandler(w http.ResponseWriter, req *http.Request) {
 	var err error
 	if len(name) > 0 {
 		log.Println("getting recipes by name for", lang, name[0])
-		results, err = getByName(lang[0], name[0], page)
+		results = getByName(lang[0], name[0], page)
 	} else if len(ingredients) > 0 {
 		log.Println("getting recipes by ingredient for", lang, ingredients[0])
-		results, err = getByIngredients(lang[0], ingredients)
+		results = getByIngredients(lang[0], ingredients)
 	} else {
-		results, err = getMostVisited(lang[0], page)
+		results = getMostVisited(lang[0], page)
 	}
 
 	if err != nil {
@@ -91,12 +92,8 @@ func staticHandler(w http.ResponseWriter, req *http.Request) {
 	switch path {
 	case "index.html":
 		by := req.URL.Query()["by"]
-		if len(by) == 0 {
-			by = []string{"visits"}
-		}
-
 		search, ok := req.URL.Query()["search"]
-		if !ok && by[0] != "visits" {
+		if !ok && len(by) > 0 {
 			http.Error(w, "need a query for "+by[0], http.StatusBadRequest)
 			return
 		}
@@ -108,33 +105,27 @@ func staticHandler(w http.ResponseWriter, req *http.Request) {
 		page, _ := strconv.Atoi(pg[0])
 
 		// The query part
+		next := page
 		var results []recipe
-		switch by[0] {
-		case "name":
-			log.Println("getting recipes by name for", lang, search)
-			results, err = getByName(lang, search[0], page)
+		if len(by) > 0 {
+			switch by[0] {
+			case "name":
+				log.Println("getting recipes by name for", lang, search)
+				results = getByName(lang, search[0], page)
 
-		case "ingredients":
-			log.Println("getting recipes by ingredient for", lang, search)
-			results, err = getByIngredients(lang, search)
+			case "ingredients":
+				log.Println("getting recipes by ingredient for", lang, search)
+				results = getByIngredients(lang, search)
 
-		case "visits":
-			log.Println("getting most seen recipes for", lang)
-			results, err = getMostVisited(lang, page)
-
-		default:
-			http.Error(w, "unknown search type", http.StatusBadRequest)
-			return
+			case "visits":
+			default:
+				http.Error(w, "unknown search type", http.StatusBadRequest)
+				return
+			}
 		}
 
 		if err != nil {
 			log.Println("error getting recipes", by, search, err)
-		}
-
-		// Check pages
-		next := page + 1
-		if len(results) < 20 {
-			next = 0
 		}
 
 		data = struct {
@@ -157,7 +148,7 @@ func staticHandler(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		data, err = getRecipe(lang, title[0])
+		data = getRecipe(lang, title[0])
 		if err != nil {
 			// TODO: Send nice page with error
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -170,7 +161,7 @@ func staticHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	err = pageTemplate.ExecuteTemplate(w, path, data)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		log.Println(err.Error())
 		return
 	}
 }
@@ -249,23 +240,56 @@ func uploadHandler(w http.ResponseWriter, req *http.Request) {
 		}
 
 		// Encode base64
-		picName := strings.ReplaceAll(newRecipe.Title, " ", "-")
-		pic := map[string]interface{}{
-			"name":    picName,
-			"content": base64.RawStdEncoding.EncodeToString(content),
-		}
-
-		newRecipe.Picture = "pictures/" + picName
-		pictures.InsertOne(ctx, pic)
+		newRecipe.Picture = base64.RawStdEncoding.EncodeToString(content)
 	}
 
-	// Insert new recipe
-	_, err = uploads.InsertOne(ctx, newRecipe)
+	// Create issue on github
+	payload, err := json.Marshal(newRecipe)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	body := struct {
+		Title string `json:"title"`
+		Body  string `json:"body"`
+	}{
+		Title: "New recipe: " + newRecipe.Title,
+		Body:  string(payload),
+	}
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	issueReq, err := http.NewRequest(
+		http.MethodPost,
+		"https://api.github.com/repos/homemade-recipes/back-end/issues",
+		bytes.NewReader(bodyBytes),
+	)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	issueReq.Header.Set("Accept", "application/vnd.github.v3+json")
+	issueReq.SetBasicAuth("blmayer", githubToken)
+
+	res, err := http.DefaultClient.Do(issueReq)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if res.StatusCode > 299 {
+		var resBody []byte
+		res.Body.Read(resBody)
+		http.Error(w, string(resBody), http.StatusInternalServerError)
+		return
+	}
 
 	// Return html
 	err = pageTemplate.ExecuteTemplate(w, path, err)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
