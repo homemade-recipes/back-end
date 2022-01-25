@@ -4,29 +4,10 @@
 <head>
 	{{template "meta.html"}}
 	<style>
-		{
-				{
-				template "main.css"
-			}
-		}
-
-			{
-				{
-				template "index.css"
-			}
-		}
-
-			{
-				{
-				template "header.css"
-			}
-		}
-
-			{
-				{
-				template "list.css"
-			}
-		}
+		{{template "main.css"}}
+		{{template "index.css"}}
+		{{template "header.css"}}
+		{{template "list.css"}}
 	</style>
 </head>
 
@@ -52,7 +33,7 @@
 	</div>
 
 	<script>
-		{ {template "favorites.js" } }
+		{{template "favorites.js" }}
 
 		let input = document.getElementById("search");
 		input.addEventListener("keyup", function (event) {
