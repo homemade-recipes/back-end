@@ -55,6 +55,7 @@ func getByName(lang, name string, page int) []recipe {
 // TODO: What to do with accents?
 func searchIngredientIndex(search []string) []recipe {
 	results := []recipe{}
+	resIndex := map[string]struct{}{}
 	round := []recipe{}
 
 	for _, r := range search {
@@ -70,8 +71,9 @@ func searchIngredientIndex(search []string) []recipe {
 			}
 		}
 
-		if hasAll {
+		if _, has := resIndex[r.Title]; !has && hasAll {
 			results = append(results, r)
+			resIndex[r.Title] = struct{}{}
 		}
 	}
 
