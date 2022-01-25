@@ -61,6 +61,7 @@ func main() {
 	if err != nil {
 		panic("decode recipes: " + err.Error())
 	}
+	db.Close()
 
 	// build indexes
 	go func() {
